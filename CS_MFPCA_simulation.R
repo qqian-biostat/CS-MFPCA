@@ -1,13 +1,13 @@
 CS_MFPCA_simulation <- function(ngrid = 32, # Number of regions (scalar)
                                 N = 100, # Number of individuals (scalar)
-                                RetentPct = 0.5, # Percentage that you want to reserve (scalar between 0 and 1)
+                                RetentPct = 0.5, # Percentage that you want to reserve in the final analysis (scalar between 0 and 1)
                                 sigma = 0.1 # Measurement error variance (scalar)
 ){
 #############################################################################
 ## Description: Function for simulating one data set under the simulation design described
 ##              in Section 6.
 ## Args: see above
-## Definition: ngrid: number of total trials;  
+## Definition: ngrid: number of total time points;  
 ##             M: number of dimensions in the original multivariate functional outcome X(t);
 ##             N: number of total individuals.
 ## Returns: list()
@@ -177,7 +177,7 @@ for (i in 1:N){
 
 
 ###############################################################
-# Construct data set for original four-dimensional multivariate 
+# Construct data set for four-dimensional multivariate 
 # functional outcome X(t)
 ###############################################################
 # Underlying true multivariate functional outcome X(t)

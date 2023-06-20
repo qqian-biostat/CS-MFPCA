@@ -5,13 +5,13 @@
 ## components analysis for novel outcomes in eye-tracking experiments".  
 #############################################################################
 ## Functions implemented: 
-## CS_MFPCA_simulation.R (Simulate a four-dimensional dataset), 
-## CS_MFPCA_MFPCA.R (Step 2 of the CS-MFPCA algorithm),
+## CS_MFPCA_simulation.R (Simulate a four-dimensional multivariate functional dataset), 
+## CS_MFPCA_algorithm.R (Step 1-2 of the CS-MFPCA algorithm),
 ## CS_MFPCA_prediction.R (Step 3 of the CS-MFPCA algorithm).
 #############################################################################
 ## Tutorial Outline:
 ## 1. Simulate four-dimensional multivariate functional outcome (CS_MFPCA_simulation.R)
-## 2. Perform CS-MFPCA algorithm (CS_MFPCA_MFPCA.R, CS_MFPCA_prediction.R)
+## 2. Perform CS-MFPCA algorithm (CS_MFPCA_algorithm.R, CS_MFPCA_prediction.R)
 ## 3. Measurement of CS-MFPCA results
 #############################################################################
 
@@ -40,10 +40,13 @@ library(abind)
 
 # Simulate one dataset from the simulation design described 
 data.G <- CS_MFPCA_simulation(ngrid = 16, N = 100, RetentPct = 1, sigma = 0.1)  
-# CS_MFPCA_simulation.R (ngrid = 32 if you want in total 32 trials, 
+# CS_MFPCA_simulation.R (ngrid = 32 if you want in total 32 time points, 
                       # N = 100 if you want in total 100 individuals,
-                      # RetentPct = 0.5 if you want to reserve 50% of the `ngrid` trials.
-                         # Note that when RetentPct = 1 is setting 1 and RetentPct = 0.5 is setting 2 in Section 6,
+                      # RetentPct = 0.5 (RetentPct is the percentage that you want to reserve in the final analysis 
+                                         # from the original generated time points) if you want to reserve 50% of 
+                                         # the `ngrid` time points.
+                                         # Note that when RetentPct = 1 is the regular design and 
+                                         # RetentPct = 0.5 is the irregular design in Section 6.
                       # sigma = 0.1 where 0.1 can be any scalar representing the setup error variance)
 
 # Data array used for estimation
@@ -58,7 +61,7 @@ data.T <- data.G$data.T
 
 # NOTE: Performing CS-MFPCA algorithm Steps 2 
 
-MFPCAout <- CS_MFPCA_MFPCA(data.obs)  # CS_MFPCA_MFPCA.R
+MFPCAout <- CS_MFPCA_algorithm(data.obs)  # CS_MFPCA_algorithm.R
 
 
 
@@ -70,7 +73,7 @@ Predout <- CS_MFPCA_prediction(MFPCAout) # CS_MFPCA_prediction.R
 #############################################################################
 # 3. Measurement of CS-MFPCA results
 #############################################################################  
-# Define the number of trials, trial points and total individuals
+# Define the total number of time points, specific time points and total individuals
 gridPoints <- data.T$gridPoints
 ngrid <- length(gridPoints)
 N <- nrow(data.T$X0.T)
@@ -99,7 +102,7 @@ RSE.fun <- function(x,y){
   return(c(min(err1, err2)))
 }
 
-# RSE for prediction errors
+# RSE for predictions
 RSE.X0.pre <- rep(0, N)
 RSE.X1.pre <- rep(0, N)
 RSE.X2.pre <- rep(0, N)
@@ -142,7 +145,7 @@ for (i in 1:3){
 ##############################################################
 
 # Predicted trajectory for a specific individual
-# id for plots
+# Subject ID for plots
 ID <- 1
 # True trajectory for the `ID`th individual
 traj0.T <- data.T$X0.T[ID,] # reference dimension
@@ -161,7 +164,7 @@ ylim1 <- min(traj0.T, traj0.Est)
 ylim2 <- max(traj0.T, traj0.Est)
 plot(gridPoints, traj0.T, "l", lwd = 2, ylim = c(ylim1,ylim2), xaxs = "i", 
      main = "Reference dimension", cex.main = 2, xlab = "", ylab = "", col = "black")
-title(xlab = "Trial", ylab = "Trajectory", line = 2, cex.lab = 1.6)
+title(xlab = "t", ylab = "Trajectory", line = 2, cex.lab = 1.6)
 lines(gridPoints, traj0.Est, col = "grey52", lwd = 2, lty = 1)
 legend("topright", legend = c("True", "Predicted"), col = c("black", "grey52"), 
        lty = c(1,1), cex = 0.85)
@@ -171,7 +174,7 @@ ylim1 <- min(traj1.T, traj1.Est)
 ylim2 <- max(traj1.T, traj1.Est)
 plot(gridPoints, traj1.T, "l", lwd = 2, ylim = c(ylim1,ylim2), xaxs = "i",
      main = "1st dimension", cex.main = 2, xlab = "", ylab = "", col = "black")
-title(xlab = "Trial",ylab = "Trajectory", line = 2, cex.lab = 1.6)
+title(xlab = "t",ylab = "Trajectory", line = 2, cex.lab = 1.6)
 lines(gridPoints, traj1.Est, col = "grey52", lwd = 2, lty = 1)
 
 # 2nd dimension
@@ -179,7 +182,7 @@ ylim1 <- min(traj2.T, traj2.Est)
 ylim2 <- max(traj2.T, traj2.Est)
 plot(gridPoints, traj2.T, "l", lwd = 2, ylim = c(ylim1,ylim2), xaxs = "i", 
      main = "2nd dimension", cex.main = 2, xlab = "", ylab = "", col = "black")
-title(xlab = "Trial", ylab = "Trajectory", line = 2, cex.lab = 1.6)
+title(xlab = "t", ylab = "Trajectory", line = 2, cex.lab = 1.6)
 lines(gridPoints, traj2.Est, col = "grey52", lwd = 2, lty = 1)
 
 
@@ -188,6 +191,6 @@ ylim1 <- min(traj3.T, traj3.Est)
 ylim2 <- max(traj3.T, traj3.Est)
 plot(gridPoints, traj3.T, "l", lwd = 2, ylim = c(ylim1,ylim2), xaxs = "i",
      main = "3rd dimension", cex.main = 2, xlab = "", ylab = "", col = "black")
-title(xlab = "Trial",ylab = "Trajectory", line = 2, cex.lab = 1.6)
+title(xlab = "t",ylab = "Trajectory", line = 2, cex.lab = 1.6)
 lines(gridPoints, traj3.Est, col = "grey52", lwd = 2, lty = 1)
 

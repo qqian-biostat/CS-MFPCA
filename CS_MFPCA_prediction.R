@@ -14,7 +14,7 @@ CS_MFPCA_prediction <- function(MFPCAout # Output from function CS_MFPCA_MFPCA i
   
 #############################################################################
   ## Description: Function for the CS-MFPCA estimation algorithm Steps 3 in Section 4).
-  ## Definition: ngrid: number of total trials;  
+  ## Definition: ngrid: number of total time points;  
   ##             M: number of dimensions in the original multivariate functional outcome X(t);
   ##             N: number of total individuals.
   ## Args:        see above
@@ -52,7 +52,7 @@ Z1.est <- MFPCAout$Z1.est
 Z2.est <- MFPCAout$Z2.est
 Z3.est <- MFPCAout$Z3.est
 
-## Define number of individuals and number of total trials
+## Define number of individuals and number of total time points
 N <- nrow(Z1.est)
 ngrid <- ncol(Z1.est)
 
